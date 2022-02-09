@@ -12,6 +12,7 @@ import models.infos.FormatsResult;
 import models.infos.LanguagesResult;
 import models.infos.UserResult;
 import models.subtitles.SubtitlesResult;
+import models.utilities.GuessItResult;
 
 import java.io.IOException;
 import java.net.URI;
@@ -148,6 +149,16 @@ public class Opensubtitles {
         HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
         FeatureResult fr = gson.fromJson(response.body(), FeatureResult.class);
         return fr.data;
+    }
+
+    public GuessItResult guess(String filename) throws IOException, InterruptedException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(Endpoints.BASE+Endpoints.GUESSIT + "?filename=" + filename));
+        builder.header("Content-Type","application/json");
+        builder.header("Api-Key",key);
+        builder.header("Authorization",token);
+        builder.GET();
+        HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+        return gson.fromJson(response.body(), GuessItResult.class);
     }
 
 }
