@@ -1,1 +1,2 @@
-/target/classes/models/authentication/LoginResult$User.class
+*.class
+.attach*

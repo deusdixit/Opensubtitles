@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 
 public class PopularQuery {
+
     private Type t = null;
     private HashSet<String> languages = null;
 
@@ -39,7 +40,8 @@ public class PopularQuery {
                 default: break;
             }
         }
-        return URLEncoder.encode(result, StandardCharsets.UTF_8);
+        return result;
+        //return URLEncoder.encode(result, StandardCharsets.UTF_8);
     }
 
     public enum Type {
