@@ -22,6 +22,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
@@ -173,19 +174,21 @@ public class Opensubtitles {
         builder.header("Authorization",token);
         builder.header("Accept-Language","en-US,en;q=0.5");
         builder.header("Accept","*/*");
-        String data = gson.toJson(body);
+        //String data = gson.toJson(body);
+        // The official body isn't working... Not sure why
+        String data = "{\"file_id\": " + body.file_id + "}";
         builder.POST(HttpRequest.BodyPublishers.ofString(data));
         HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
         return gson.fromJson(response.body(), DownloadLinkResult.class);
     }
 
-    public DownloadLinkResult getDownloadLink(Subtitle.FileObject subFile,float fps) throws IOException, InterruptedException {
-        DownloadBody body = new DownloadBody().setForceDownload(true).setFileId(subFile.file_id).setFileName(subFile.file_name).setSubFormat("srt").setInFps(fps).setOutFps(fps).setTimeshift(0);
+    public DownloadLinkResult getDownloadLink(Subtitle.FileObject subFile) throws IOException, InterruptedException {
+        DownloadBody body = new DownloadBody().setForceDownload(true).setFileId(subFile.file_id).setFileName(subFile.file_name).setSubFormat("srt").setTimeshift(0);
         return getDownloadLink(body);
     }
 
-    public void download(DownloadLinkResult link,File location) throws IOException {
-        String save = location.isFile() ? location.toString() : String.format("%s%s%s",location.toString(),File.separator,link.file_name);
+    public void download(DownloadLinkResult link, Path location) throws IOException {
+        String save = location.toString();
         InputStream inputStream = new URL(link.link).openStream();
         Files.copy(inputStream, Paths.get(save), StandardCopyOption.REPLACE_EXISTING);
     }
