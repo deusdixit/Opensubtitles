@@ -6,7 +6,8 @@ import models.authentication.Credentials;
 import models.authentication.LoginResult;
 import models.authentication.LogoutResult;
 import models.discover.DiscoverResult;
-import models.discover.DiscoverQuery;
+import models.download.DownloadBody;
+import models.download.DownloadLinkResult;
 import models.features.*;
 import models.infos.FormatsResult;
 import models.infos.LanguagesResult;
@@ -14,11 +15,15 @@ import models.infos.UserResult;
 import models.subtitles.SubtitlesResult;
 import models.utilities.GuessItResult;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class Opensubtitles {
 
@@ -160,5 +165,30 @@ public class Opensubtitles {
         HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
         return gson.fromJson(response.body(), GuessItResult.class);
     }
+
+    public DownloadLinkResult getDownloadLink(DownloadBody body) throws IOException, InterruptedException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(Endpoints.BASE+Endpoints.DOWNLOAD));
+        builder.header("Content-Type","application/json");
+        builder.header("Api-Key",key);
+        builder.header("Authorization",token);
+        builder.header("Accept-Language","en-US,en;q=0.5");
+        builder.header("Accept","*/*");
+        String data = gson.toJson(body);
+        builder.POST(HttpRequest.BodyPublishers.ofString(data));
+        HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+        return gson.fromJson(response.body(), DownloadLinkResult.class);
+    }
+
+    public DownloadLinkResult getDownloadLink(Subtitle.FileObject subFile,float fps) throws IOException, InterruptedException {
+        DownloadBody body = new DownloadBody().setForceDownload(true).setFileId(subFile.file_id).setFileName(subFile.file_name).setSubFormat("srt").setInFps(fps).setOutFps(fps).setTimeshift(0);
+        return getDownloadLink(body);
+    }
+
+    public void download(DownloadLinkResult link,File location) throws IOException {
+        String save = location.isFile() ? location.toString() : String.format("%s%s%s",location.toString(),File.separator,link.file_name);
+        InputStream inputStream = new URL(link.link).openStream();
+        Files.copy(inputStream, Paths.get(save), StandardCopyOption.REPLACE_EXISTING);
+    }
+
 
 }

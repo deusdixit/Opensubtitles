@@ -10,4 +10,5 @@ public class Endpoints {
     public final static String SUBTITLES = "/subtitles";
     public final static String FEATURES = "/features";
     public final static String GUESSIT = "/utilities/guessit";
+    public final static String DOWNLOAD = "/download";
 }

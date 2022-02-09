@@ -1,7 +1,7 @@
 package models.features;
 
 public class Subtitle extends Feature {
-    Attributes attributes;
+    public Attributes attributes;
 
     public class Attributes {
         public String subtitle_id;
@@ -23,11 +23,11 @@ public class Subtitle extends Feature {
         public String release;
         public String comments;
         public float legacy_subtitle_id;
-        Uploader uploader;
-        FeatureDetails feature_details;
+        public Uploader uploader;
+        public FeatureDetails feature_details;
         public String url;
-        RelatedLink[] related_links;
-        FileObject[] files;
+        public RelatedLink[] related_links;
+        public FileObject[] files;
         
     }
 
