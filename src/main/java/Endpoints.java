@@ -1,6 +1,9 @@
 public class Endpoints {
-    public final static String BASE = "https://api.opensubtitles.com";
-    public final static String LOGIN = "/api/v1/login";
-    public final static String LOGOUT = "/api/v1/logout";
-    public final static String POPULAR = "/api/v1/discover/popular";
+    public final static String BASE = "https://api.opensubtitles.com/api/v1";
+    public final static String LOGIN = "/login";
+    public final static String LOGOUT = "/logout";
+    public final static String POPULAR = "/discover/popular";
+    public final static String FORMATS = "/infos/formats";
+    public final static String LANGUAGES = "/infos/languages";
+    public final static String USER = "/infos/user";
 }
