@@ -1,11 +1,12 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+import models.Query;
 import models.authentication.Credentials;
 import models.authentication.LoginResult;
 import models.authentication.LogoutResult;
-import models.discover.PopularQuery;
-import models.discover.PopularResult;
+import models.discover.DiscoverResult;
+import models.discover.DiscoverQuery;
 import models.features.*;
 import models.infos.FormatsResult;
 import models.infos.LanguagesResult;
@@ -67,16 +68,6 @@ public class Opensubtitles {
         return null;
     }
 
-    public PopularResult popular(PopularQuery pQuery) throws IOException, InterruptedException {
-        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(Endpoints.BASE+Endpoints.POPULAR + "?" + pQuery.toString()));
-        builder.header("Content-Type","application/json");
-        builder.header("Api-Key",key);
-        builder.header("Authorization",token);
-        builder.GET();
-        HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
-        return gson.fromJson(response.body(),PopularResult.class);
-    }
-
     public FormatsResult getFormats() throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(Endpoints.BASE+Endpoints.FORMATS));
         builder.header("Content-Type","application/json");
@@ -105,6 +96,36 @@ public class Opensubtitles {
         builder.GET();
         HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
         return gson.fromJson(response.body(),UserResult.class);
+    }
+
+    public DiscoverResult getLatest(Query query) throws IOException, InterruptedException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(Endpoints.BASE+Endpoints.POPULAR + "?" + query.toString()));
+        builder.header("Content-Type","application/json");
+        builder.header("Api-Key",key);
+        builder.header("Authorization",token);
+        builder.GET();
+        HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+        return gson.fromJson(response.body(), DiscoverResult.class);
+    }
+
+    public DiscoverResult getPopular(Query query) throws IOException, InterruptedException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(Endpoints.BASE+Endpoints.POPULAR + "?" + query.toString()));
+        builder.header("Content-Type","application/json");
+        builder.header("Api-Key",key);
+        builder.header("Authorization",token);
+        builder.GET();
+        HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+        return gson.fromJson(response.body(),DiscoverResult.class);
+    }
+
+    public DiscoverResult getMostDownloaded(Query query) throws IOException, InterruptedException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(Endpoints.BASE+Endpoints.MOST_DOWNLOADED + "?" + query.toString()));
+        builder.header("Content-Type","application/json");
+        builder.header("Api-Key",key);
+        builder.header("Authorization",token);
+        builder.GET();
+        HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+        return gson.fromJson(response.body(),DiscoverResult.class);
     }
 
 }

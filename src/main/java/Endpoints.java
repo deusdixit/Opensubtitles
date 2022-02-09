@@ -6,4 +6,5 @@ public class Endpoints {
     public final static String FORMATS = "/infos/formats";
     public final static String LANGUAGES = "/infos/languages";
     public final static String USER = "/infos/user";
+    public final static String MOST_DOWNLOADED = "/discover/most_downloaded";
 }
