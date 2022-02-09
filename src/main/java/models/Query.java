@@ -1,17 +1,27 @@
 package models;
 
 import java.util.HashMap;
+import java.util.TreeMap;
 
 public abstract class Query {
 
-    private HashMap<String,String> data;
+    private TreeMap<String,String> data;
 
     public Query() {
-        data = new HashMap<>();
+        data = new TreeMap<>();
     }
 
     public void add(String key,String value) {
-        data.put(key,value);
+        data.put(key.toLowerCase(),value.toLowerCase());
+    }
+
+    public String get(String key) {
+        key = key.toLowerCase();
+        if ( data.containsKey(key)) {
+            return data.get(key);
+        } else {
+            return null;
+        }
     }
 
     public abstract Query build();
