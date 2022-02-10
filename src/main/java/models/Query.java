@@ -6,6 +6,7 @@ import java.util.TreeMap;
 public abstract class Query {
 
     private TreeMap<String,String> data;
+    public static Query EMPTY_QUERY = new EmptyQuery();
 
     public Query() {
         data = new TreeMap<>();
@@ -28,7 +29,10 @@ public abstract class Query {
 
     @Override
     public String toString() {
-        String result = "";
+        if ( data.size() <= 0 ) {
+            return "";
+        }
+        String result = "?";
         for(String key : data.keySet()) {
             result += String.format("%s=%s&",key,data.get(key));
         }
@@ -36,6 +40,14 @@ public abstract class Query {
             result = result.substring(0,result.length()-1);
         }
         return result;
+    }
+
+    static class EmptyQuery extends Query{
+
+        @Override
+        public Query build() {
+            return this;
+        }
     }
 
 }

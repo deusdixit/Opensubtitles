@@ -3,6 +3,7 @@ public class Endpoints {
     public final static String LOGIN = "/login";
     public final static String LOGOUT = "/logout";
     public final static String POPULAR = "/discover/popular";
+    public final static String LATEST = "/discover/latest";
     public final static String FORMATS = "/infos/formats";
     public final static String LANGUAGES = "/infos/languages";
     public final static String USER = "/infos/user";
