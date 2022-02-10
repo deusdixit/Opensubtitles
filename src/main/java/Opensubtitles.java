@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.TreeMap;
 
 public class Opensubtitles {
 
@@ -33,11 +34,16 @@ public class Opensubtitles {
     private String token = null;
     private HttpClient client;
     private Gson gson;
-
+    private TreeMap<String,String> header;
 
     public Opensubtitles(String username,String password,String apikey) {
         credentials = new Credentials(username,password);
         this.key = apikey;
+        header = new TreeMap<>();
+        header.put("Content-Type","application/json");
+        header.put("Api-Key",key);
+        header.put("Accept-Language","en-US,en;q=0.5");
+        header.put("Accept","*/*");
         client = HttpClient.newHttpClient();
         RuntimeTypeAdapterFactory<Feature> rta = RuntimeTypeAdapterFactory.of(
                         Feature.class,"type",true).registerSubtype(Movie.class,"movie")
@@ -55,7 +61,7 @@ public class Opensubtitles {
         builder.POST(HttpRequest.BodyPublishers.ofString(data));
         HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
         LoginResult result = gson.fromJson(response.body(),LoginResult.class);
-        token = result.token;
+        header.put("Authorization","Bearer " + token);
         return result;
     }
 
