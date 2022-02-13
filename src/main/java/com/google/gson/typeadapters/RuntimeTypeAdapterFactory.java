@@ -235,6 +235,14 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
                             + " because it does not define a field named " + typeFieldName);
                 }
                 String label = labelJsonElement.getAsString();
+                if ( label.equals("feature") ) { // fix for inconsistent API
+                    JsonElement obj = jsonElement.getAsJsonObject().get("attributes").getAsJsonObject().get("feature_type");
+                    if (obj == null) {
+                        throw new JsonParseException("cannot deserialize " + baseType
+                                + " because it does not define a field named attributes.feature_type");
+                    }
+                    label = obj.getAsString().toLowerCase();
+                }
                 @SuppressWarnings("unchecked") // registration requires that subtype extends T
                 TypeAdapter<R> delegate = (TypeAdapter<R>) labelToDelegate.get(label);
                 if (delegate == null) {
