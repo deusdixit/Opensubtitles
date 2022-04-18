@@ -48,8 +48,14 @@ public class Opensubtitles {
         return result;
     }
 
+    public boolean isLoggedIn() {
+        return header.containsKey("Authorization") && header.get("Authorization").length() > 0;
+    }
+
     public LogoutResult logout() throws IOException, InterruptedException {
-        return Requests.<LogoutResult>delete(header,Endpoints.LOGOUT,Query.EMPTY_QUERY,LogoutResult.class);
+        LogoutResult lr = Requests.<LogoutResult>delete(header,Endpoints.LOGOUT,Query.EMPTY_QUERY,LogoutResult.class);
+        header.remove("Authorization");
+        return lr;
     }
 
 
@@ -88,7 +94,6 @@ public class Opensubtitles {
         }
         return fr.data;
     }
-
 
     public GuessItResult guess(GuessItQuery query) throws IOException, InterruptedException {
         return Requests.<GuessItResult>get(header,Endpoints.GUESSIT,query,GuessItResult.class);

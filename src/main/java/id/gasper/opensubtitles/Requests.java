@@ -6,15 +6,19 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import id.gasper.opensubtitles.models.Query;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class Requests<T>{
 
     private static Gson gsonInstance = null;
+
 
     public static Gson getGson() {
         if ( gsonInstance == null ) {

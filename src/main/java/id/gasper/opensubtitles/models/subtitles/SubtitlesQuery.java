@@ -98,6 +98,7 @@ public class SubtitlesQuery extends Query {
             case IMDB_ID:this.add("order_by","imdb_id");break;
             case LANGUAGES:this.add("order_by","languages");break;
             case MACHINE_TRANSLATED:this.add("order_by","machine_translated");break;
+            case DOWNLOAD_COUNT: this.add("order_by","download_count");break;
             default:break;
         }
 
@@ -177,7 +178,7 @@ public class SubtitlesQuery extends Query {
     }
 
     public enum OrderOptions {
-        AI_TRANSLATED,EPISODE_NUMBER,FOREIGN_PARTS_ONLY,HEARING_IMPAIRED,ID,IMDB_ID,LANGUAGES,MACHINE_TRANSLATED
+        AI_TRANSLATED,EPISODE_NUMBER,FOREIGN_PARTS_ONLY,HEARING_IMPAIRED,ID,IMDB_ID,LANGUAGES,MACHINE_TRANSLATED,DOWNLOAD_COUNT
     }
 
     public enum OrderDirection {
