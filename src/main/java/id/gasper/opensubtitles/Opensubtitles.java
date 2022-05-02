@@ -27,9 +27,8 @@ import java.util.TreeMap;
 
 public class Opensubtitles {
 
-    private final String key;
     private final Credentials credentials;
-    private TreeMap<String,String> header;
+    private final TreeMap<String,String> header;
 
     /**
      * Constructor
@@ -39,10 +38,9 @@ public class Opensubtitles {
      */
     public Opensubtitles(String username,String password,String apikey) {
         credentials = new Credentials(username,password);
-        this.key = apikey;
         header = new TreeMap<>();
         header.put("Content-Type","application/json");
-        header.put("Api-Key",key);
+        header.put("Api-Key", apikey);
         header.put("Accept-Language","en-US,en;q=0.5");
         header.put("Accept","*/*");
     }
@@ -74,7 +72,7 @@ public class Opensubtitles {
      * @see id.gasper.opensubtitles.models.authentication.LogoutResult
      */
     public LogoutResult logout() throws IOException, InterruptedException {
-        LogoutResult lr = Requests.<LogoutResult>delete(header,Endpoints.LOGOUT,Query.EMPTY_QUERY,LogoutResult.class);
+        LogoutResult lr = Requests.<LogoutResult>delete(header,Endpoints.LOGOUT,Query.getEmptyQuery(),LogoutResult.class);
         header.remove("Authorization");
         return lr;
     }
@@ -85,7 +83,7 @@ public class Opensubtitles {
      * @see id.gasper.opensubtitles.models.infos.FormatsResult
      */
     public FormatsResult getFormats() throws IOException, InterruptedException {
-        return Requests.<FormatsResult>get(header,Endpoints.FORMATS,Query.EMPTY_QUERY,FormatsResult.class);
+        return Requests.<FormatsResult>get(header,Endpoints.FORMATS,Query.getEmptyQuery(),FormatsResult.class);
     }
 
     /**
@@ -94,7 +92,7 @@ public class Opensubtitles {
      * @see id.gasper.opensubtitles.models.infos.LanguagesResult
      */
     public LanguagesResult getLanguages() throws IOException, InterruptedException {
-        return Requests.<LanguagesResult>get(header,Endpoints.LANGUAGES,Query.EMPTY_QUERY,LanguagesResult.class);
+        return Requests.<LanguagesResult>get(header,Endpoints.LANGUAGES,Query.getEmptyQuery(),LanguagesResult.class);
     }
 
     /**
@@ -104,7 +102,7 @@ public class Opensubtitles {
      * @see id.gasper.opensubtitles.models.infos.UserResult
      */
     public UserResult getUserInfo() throws IOException, InterruptedException {
-        return Requests.<UserResult>get(header,Endpoints.USER,Query.EMPTY_QUERY,UserResult.class);
+        return Requests.<UserResult>get(header,Endpoints.USER,Query.getEmptyQuery(),UserResult.class);
     }
 
     /**
@@ -171,9 +169,9 @@ public class Opensubtitles {
      *
      * It has a very powerful matcher that allows to guess properties from a video using its filename only. This matcher works with both movies and tv shows episodes.
      *
-     * This is a simple implementation of the python guessit library. https://doc.guessit.io
+     * This is a simple implementation of the python guessit library. <a href="https://doc.guessit.io">https://doc.guessit.io</a>
      *
-     * Find examples of the returned data. https://doc.guessit.io/properties/
+     * Find examples of the returned data. <a href="https://doc.guessit.io/properties/">https://doc.guessit.io/properties/</a>
      * @param query GuessItQuery
      * @return a GuessItResult Object which is a wrapper for the API response
      * @see id.gasper.opensubtitles.models.utilities.GuessItQuery

@@ -1,5 +1,8 @@
 package id.gasper.opensubtitles;
 
+/**
+ * All API-Endpoints of <a href="https://opensubtitles.com">https://opensubtitles.com</a>
+ */
 public class Endpoints {
     public final static String BASE = "https://api.opensubtitles.com/api/v1";
     public final static String LOGIN = "/login";

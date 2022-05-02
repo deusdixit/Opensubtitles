@@ -7,8 +7,9 @@ import java.util.TreeMap;
 
 public abstract class Query {
 
-    static class EmptyQuery extends id.gasper.opensubtitles.models.Query{
+    private final TreeMap<String,String> data;
 
+    private static class EmptyQuery extends id.gasper.opensubtitles.models.Query{
         @Override
         public Query build() {
             return this;
@@ -23,8 +24,9 @@ public abstract class Query {
         }
     }
 
-    private TreeMap<String,String> data;
-    public static Query EMPTY_QUERY = new EmptyQuery();
+    public static Query getEmptyQuery() {
+        return new EmptyQuery();
+    }
 
     public Query() {
         data = new TreeMap<>();
@@ -36,11 +38,7 @@ public abstract class Query {
 
     public String get(String key) {
         key = key.toLowerCase();
-        if ( data.containsKey(key)) {
-            return data.get(key);
-        } else {
-            return null;
-        }
+        return data.getOrDefault(key, null);
     }
 
     public abstract Query build();
@@ -50,14 +48,14 @@ public abstract class Query {
         if ( data.size() <= 0 ) {
             return "";
         }
-        String result = "?";
+        StringBuilder result = new StringBuilder("?");
         for(String key : data.keySet()) {
-            result += String.format("%s=%s&",key,data.get(key));
+            result.append(String.format("%s=%s&", key, data.get(key)));
         }
-        if ( result.endsWith("&")) {
-            result = result.substring(0,result.length()-1);
+        if ( result.toString().endsWith("&")) {
+            result = new StringBuilder(result.substring(0, result.length() - 1));
         }
-        return result;
+        return result.toString();
     }
 }
 

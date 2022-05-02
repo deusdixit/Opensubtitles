@@ -6,21 +6,26 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import id.gasper.opensubtitles.models.Query;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Map;
 
+/**
+ * Class for the HTTP-Requests ( GET,POST,DELETE )
+ * The requests get interpreted by the Gson Library and converted into the corresponding classes.
+ * @param <T> generic type for the corresponding class
+ */
 public class Requests<T>{
 
     private static Gson gsonInstance = null;
 
-
+    /**
+     * Singleton-Function for the Gson Object
+     * @return a Gson Object
+     */
     public static Gson getGson() {
         if ( gsonInstance == null ) {
             RuntimeTypeAdapterFactory<id.gasper.opensubtitles.models.features.Feature> rta = RuntimeTypeAdapterFactory.of(
@@ -33,6 +38,15 @@ public class Requests<T>{
         return gsonInstance;
     }
 
+    /**
+     * Function for a GET-Request.
+     * @param header Map containing the Header-Data
+     * @param path The Url
+     * @param q The Query
+     * @param cls The Wrapper Class
+     * @return A Wrapper Class Object
+     * @param <T> Wrapper Class Type
+     */
     public static <T> T get(Map<String,String> header, String path, Query q, Class<T> cls) throws IOException, InterruptedException {
         Gson gson = getGson();
         HttpClient client = HttpClient.newHttpClient();
@@ -46,6 +60,15 @@ public class Requests<T>{
         return gson.fromJson(response.body(), cls);
     }
 
+    /**
+     * Function for a POST-Request.
+     * @param header Map containing the Header-Data
+     * @param path The Url
+     * @param data The Query-Data
+     * @param cls The Wrapper Class
+     * @return A Wrapper Class Object
+     * @param <T> Wrapper Class Type
+     */
     public static <T> T post(Map<String,String> header, String path, String data, Class<T> cls) throws IOException, InterruptedException {
         Gson gson = getGson();
         HttpClient client = HttpClient.newHttpClient();
@@ -59,6 +82,15 @@ public class Requests<T>{
         return gson.fromJson(response.body(),cls);
     }
 
+    /**
+     * Function for a DELETE-Request.
+     * @param header Map containing the Header-Data
+     * @param path The Url
+     * @param q The Query
+     * @param cls The Wrapper Class
+     * @return A Wrapper Class Object
+     * @param <T> Wrapper Class Type
+     */
     public static <T> T delete(Map<String,String> header,String path,Query q,Class<T> cls) throws IOException, InterruptedException {
         Gson gson = getGson();
         HttpClient client = HttpClient.newHttpClient();
