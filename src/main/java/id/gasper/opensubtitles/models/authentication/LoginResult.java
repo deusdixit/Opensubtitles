@@ -5,7 +5,7 @@ public class LoginResult {
     public String token;
     public int status;
 
-    public class User {
+    public static class User {
         public int allowed_downloads;
         public String level;
         public int user_id;
