@@ -13,6 +13,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Map;
 
 public class Requests<T>{
@@ -36,6 +37,7 @@ public class Requests<T>{
         Gson gson = getGson();
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(Endpoints.BASE+path+q.toString()));
+        builder.timeout(Duration.ofSeconds(20));
         for(String key : header.keySet()) {
             builder.header(key,header.get(key));
         }
@@ -48,6 +50,7 @@ public class Requests<T>{
         Gson gson = getGson();
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(Endpoints.BASE+path));
+        builder.timeout(Duration.ofSeconds(20)); // timeout of 20 Seconds
         for(String key : header.keySet()) {
             builder.header(key,header.get(key));
         }
@@ -60,6 +63,7 @@ public class Requests<T>{
         Gson gson = getGson();
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(Endpoints.BASE+path+q.toString()));
+        builder.timeout(Duration.ofSeconds(20));
         for(String key : header.keySet()) {
             builder.header(key,header.get(key));
         }
