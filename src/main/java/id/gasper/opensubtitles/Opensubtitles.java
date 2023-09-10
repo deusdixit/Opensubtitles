@@ -43,6 +43,19 @@ public class Opensubtitles {
         header.put("Api-Key", apikey);
         header.put("Accept-Language","en-US,en;q=0.5");
         header.put("Accept","*/*");
+        header.put("User-Agent","OpensubtitlesAPI v1.0.1");
+    }
+
+    /**
+     * Constructor with user-agent
+     * @param username <a href="Opensubtitles.com">Opensubtitles</a> username
+     * @param password <a href="Opensubtitles.com">Opensubtitles</a> password
+     * @param apikey <a href="Opensubtitles.com">Opensubtitles</a> API-KEY
+     * @param useragent The User-Agent for the application
+     */
+    public Opensubtitles(String username, String password, String apikey,String useragent) {
+        this(username,password,apikey);
+        header.put("User-Agent",useragent);
     }
 
     /**
