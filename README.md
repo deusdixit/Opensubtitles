@@ -1,3 +1,7 @@
+# Requirements
+- An Account at https://www.opensubtitles.com
+- API-Key
+- More documentation : https://opensubtitles.stoplight.io/docs/opensubtitles-api/
 # INSTALL
 # EXAMPLES
 ### LOGIN
