@@ -7,7 +7,7 @@ import java.util.HashSet;
 public class DiscoverQuery extends Query {
 
     private Type t = null;
-    private HashSet<String> languages = null;
+    private final HashSet<String> languages;
 
     public DiscoverQuery() {
         languages = new HashSet<>();
@@ -15,15 +15,20 @@ public class DiscoverQuery extends Query {
 
     @Override
     public Query build() {
-        if ( languages.size() > 0 ) {
-            String lang = String.join(",",languages);
-            this.add("languages",lang);
+        if (!languages.isEmpty()) {
+            String lang = String.join(",", languages);
+            this.add("languages", lang);
         }
-        if ( t != null ) {
+        if (t != null) {
             switch (t) {
-                case MOVIE : this.add("type","movie");break;
-                case TVSHOW: this.add("type","tvshow");break;
-                default: break;
+                case MOVIE:
+                    this.add("type", "movie");
+                    break;
+                case TVSHOW:
+                    this.add("type", "tvshow");
+                    break;
+                default:
+                    break;
             }
         }
         return this;
@@ -41,6 +46,6 @@ public class DiscoverQuery extends Query {
 
 
     public enum Type {
-        MOVIE,TVSHOW
+        MOVIE, TVSHOW
     }
 }
