@@ -6,7 +6,7 @@
 
     <groupId>id.gasper.opensubtitles</groupId>
     <artifactId>Opensubtitles</artifactId>
-    <version>1.3.0-SNAPSHOT</version> <!-- Refers to Opensubtitles API Version 1.0.1 -->
+    <version>1.3.0</version> <!-- Refers to Opensubtitles API Version 1.0.1 -->
     <build>
         <plugins>
             <plugin>
