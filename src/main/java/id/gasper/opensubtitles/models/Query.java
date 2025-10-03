@@ -1,15 +1,14 @@
 package id.gasper.opensubtitles.models;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.TreeMap;
 
 public abstract class Query {
 
-    private final TreeMap<String,String> data;
+    private final TreeMap<String, String> data;
 
-    private static class EmptyQuery extends id.gasper.opensubtitles.models.Query{
+    private static class EmptyQuery extends id.gasper.opensubtitles.models.Query {
         @Override
         public Query build() {
             return this;
@@ -17,11 +16,7 @@ public abstract class Query {
     }
 
     private String encodeValue(String value) {
-        try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException ex) {
-            return value;
-        }
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     public static Query getEmptyQuery() {
@@ -32,8 +27,8 @@ public abstract class Query {
         data = new TreeMap<>();
     }
 
-    public void add(String key,String value) {
-        data.put(key.toLowerCase(),encodeValue(value.toLowerCase()));
+    public void add(String key, String value) {
+        data.put(key.toLowerCase(), encodeValue(value.toLowerCase()));
     }
 
     public String get(String key) {
@@ -45,14 +40,14 @@ public abstract class Query {
 
     @Override
     public String toString() {
-        if ( data.size() <= 0 ) {
+        if (data.size() <= 0) {
             return "";
         }
         StringBuilder result = new StringBuilder("?");
-        for(String key : data.keySet()) {
+        for (String key : data.keySet()) {
             result.append(String.format("%s=%s&", key, data.get(key)));
         }
-        if ( result.toString().endsWith("&")) {
+        if (result.toString().endsWith("&")) {
             result = new StringBuilder(result.substring(0, result.length() - 1));
         }
         return result.toString();

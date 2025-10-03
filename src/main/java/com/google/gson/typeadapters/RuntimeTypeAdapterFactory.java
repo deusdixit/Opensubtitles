@@ -16,20 +16,14 @@
 
 package com.google.gson.typeadapters;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Adapts values whose runtime type may differ from their declaration type. This
@@ -178,7 +172,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * sensitive.
      *
      * @throws IllegalArgumentException if either {@code type} or {@code label}
-     *     have already been registered on this type adapter.
+     *                                  have already been registered on this type adapter.
      */
     public RuntimeTypeAdapterFactory<T> registerSubtype(Class<? extends T> type, String label) {
         if (type == null || label == null) {
@@ -197,7 +191,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * name}. Labels are case sensitive.
      *
      * @throws IllegalArgumentException if either {@code type} or its simple name
-     *     have already been registered on this type adapter.
+     *                                  have already been registered on this type adapter.
      */
     public RuntimeTypeAdapterFactory<T> registerSubtype(Class<? extends T> type) {
         return registerSubtype(type, type.getSimpleName());
@@ -209,19 +203,20 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
             return null;
         }
 
-        final TypeAdapter<JsonElement> jsonElementAdapter = gson.getAdapter(JsonElement.class);
+        final TypeAdapter<JsonElement> jsonElementAdapter = gson.getAdapter(JsonElement.class).nullSafe();
         final Map<String, TypeAdapter<?>> labelToDelegate
                 = new LinkedHashMap<String, TypeAdapter<?>>();
         final Map<Class<?>, TypeAdapter<?>> subtypeToDelegate
                 = new LinkedHashMap<Class<?>, TypeAdapter<?>>();
         for (Map.Entry<String, Class<?>> entry : labelToSubtype.entrySet()) {
-            TypeAdapter<?> delegate = gson.getDelegateAdapter(this, TypeToken.get(entry.getValue()));
+            TypeAdapter<?> delegate = gson.getDelegateAdapter(this, TypeToken.get(entry.getValue())).nullSafe();
             labelToDelegate.put(entry.getKey(), delegate);
             subtypeToDelegate.put(entry.getValue(), delegate);
         }
 
         return new TypeAdapter<R>() {
-            @Override public R read(JsonReader in) throws IOException {
+            @Override
+            public R read(JsonReader in) throws IOException {
                 JsonElement jsonElement = jsonElementAdapter.read(in);
                 JsonElement labelJsonElement;
                 if (maintainType) {
@@ -235,7 +230,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
                             + " because it does not define a field named " + typeFieldName);
                 }
                 String label = labelJsonElement.getAsString();
-                if ( label.equals("feature") ) { // fix for inconsistent API
+                if (label.equals("feature") && jsonElement.getAsJsonObject().get("attributes") != null) { // fix for inconsistent API
                     JsonElement obj = jsonElement.getAsJsonObject().get("attributes").getAsJsonObject().get("feature_type");
                     if (obj == null) {
                         throw new JsonParseException("cannot deserialize " + baseType
@@ -252,7 +247,8 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
                 return delegate.fromJsonTree(jsonElement);
             }
 
-            @Override public void write(JsonWriter out, R value) throws IOException {
+            @Override
+            public void write(JsonWriter out, R value) throws IOException {
                 Class<?> srcType = value.getClass();
                 String label = subtypeToLabel.get(srcType);
                 @SuppressWarnings("unchecked") // registration requires that subtype extends T

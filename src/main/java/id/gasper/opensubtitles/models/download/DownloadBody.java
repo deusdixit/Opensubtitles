@@ -1,6 +1,12 @@
 package id.gasper.opensubtitles.models.download;
 
+/**
+ * The DownloadBody class represents the payload for requesting a file download.
+ * It allows setting various parameters such as file ID, subtitle format, file name, frame rates,
+ * time shift, and whether the download should be forced.
+ */
 public class DownloadBody {
+
     public int file_id;
     public String sub_format;
     public String file_name;
