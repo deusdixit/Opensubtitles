@@ -84,15 +84,24 @@ public class Requests<T> {
             ResponseHandler<T> responseHandler) throws IOException, InterruptedException {
         int retryCounter = 0;
         int lastStatusCode = -1;
+        String lastBody = "";
         try (HttpClient client = HttpClient.newHttpClient()) {
 
             while (retryCounter < RETRIES) {
                 HttpRequest request = requestSupplier.get();
                 HttpResponse<?> response = client.send(request, responseHandler.bodyHandler());
 
-                if (response.statusCode() >= 400) {
+                int code = response.statusCode();
+                if (code >= 400) {
+                    lastStatusCode = code;
+                    lastBody = bodyToString(response.body());
+                    // Bei 429 (Rate-Limit) keinen Retry: erneute Versuche verschlimmern
+                    // das Limit nur und verbraehen Zeit. Sofort melden, damit der Aufrufer
+                    // reagieren kann (z. B. pausieren oder abbrechen).
+                    if (code == 429) {
+                        throw buildRetryException(code, lastBody);
+                    }
                     retryCounter++;
-                    lastStatusCode = response.statusCode();
                     if (retryCounter < RETRIES) {
                         Thread.sleep(SLEEP_BEFORE_RETRY);
                     }
@@ -103,7 +112,66 @@ public class Requests<T> {
             }
         }
 
-        throw new HttpRetryException("Retries failed with status code ", lastStatusCode);
+        throw buildRetryException(lastStatusCode, lastBody);
+    }
+
+    /**
+     * Baut eine aussagekraeftige {@link HttpRetryException}: HTTP-Statuscode plus die vom API
+     * gelieferte {@code message} (falls im JSON-Body enthalten), sonst ein kurzer Body-Auszug.
+     * So sieht der Aufrufer WHY eine Anfrage fehlgeschlagen ist (Rate-Limit, 0 Downloads
+     * verbleibend, nicht autorisiert, …) statt nur „Retries failed with status code".
+     */
+    private static HttpRetryException buildRetryException(int statusCode, String body) {
+        String meaning = extractMessage(body);
+        if (meaning == null || meaning.isBlank()) {
+            // Bekannte Statuscodes mit Kurzform, falls der Body keine message enthaelt.
+            meaning = switch (statusCode) {
+                case 401 -> "Nicht autorisiert (Login/Token fehlt oder ungueltig)";
+                case 403 -> "Verboten";
+                case 406 -> "Nicht akzeptiert (oft: keine Downloads mehr verbleibend)";
+                case 429 -> "Rate-Limit ueberschritten (Anfragen pro Sekunde begrenzen)";
+                case -1 -> "Keine Antwort (Netzwerk-/Timeout-Fehler)";
+                default -> "";
+            };
+            if (meaning.isBlank() && body != null && !body.isBlank()) {
+                meaning = "Body: " + body.substring(0, Math.min(body.length(), 200));
+            }
+        }
+        String detail = meaning.isBlank() ? "" : " – " + meaning;
+        String codeText = statusCode < 0 ? "ohne Antwort" : String.valueOf(statusCode);
+        return new HttpRetryException(
+                "OpenSubtitles HTTP " + codeText + detail, statusCode);
+    }
+
+    /**
+     * Liest den Response-Body (byte[] oder String) als UTF-8-String – unabhängig vom
+     * konkreten {@link HttpResponse.BodyHandler}.
+     */
+    private static String bodyToString(Object body) {
+        if (body == null) {
+            return "";
+        }
+        if (body instanceof byte[] b) {
+            return new String(b, StandardCharsets.UTF_8);
+        }
+        if (body instanceof String s) {
+            return s;
+        }
+        return body.toString();
+    }
+
+    /**
+     * Extrahiert das {@code message}-Feld aus einem OpenSubtitles-Fehler-JSON, z. B.
+     * {@code {"message":"API rate limit exceeded","status":429}}. Bewusst ohne
+     * Gson (regex), damit die Fehlermeldung auch bei kaputtem JSON noch greift.
+     */
+    private static String extractMessage(String body) {
+        if (body == null || body.isBlank()) {
+            return "";
+        }
+        java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("\"message\"\s*:\s*\"([^\"]*)\"").matcher(body);
+        return m.find() ? m.group(1) : "";
     }
 
     /**
