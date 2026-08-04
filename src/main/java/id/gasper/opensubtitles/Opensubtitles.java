@@ -95,6 +95,40 @@ public class Opensubtitles {
     }
 
     /**
+     * Sets a previously obtained authorization token without calling {@link #login()}.
+     * <p>
+     * Useful for short-lived CLI processes that want to persist the bearer token across
+     * invocations (e.g. to a file) instead of logging in on every run. OpenSubtitles limits
+     * {@code /login} to one request per second and locks out accounts for 24 hours after
+     * repeated failed password attempts, so reusing a still-valid token avoids those
+     * pitfalls entirely. The token is typically valid for ~24 hours.
+     *
+     * @param token the bearer token without the {@code "Bearer "} prefix; if {@code null} or
+     *             blank, no token is set
+     * @see #getToken()
+     */
+    public void setToken(String token) {
+        if (token != null && !token.isBlank()) {
+            header.put("Authorization", "Bearer " + token.trim());
+        }
+    }
+
+    /**
+     * Returns the current bearer token (without the {@code "Bearer "} prefix), or {@code null}
+     * if none is set. Intended to be persisted by the caller right after {@link #login()} so
+     * it can be restored via {@link #setToken(String)} on the next run.
+     *
+     * @return the bearer token, or {@code null} if not logged in
+     */
+    public String getToken() {
+        String auth = header.get("Authorization");
+        if (auth != null && auth.startsWith("Bearer ")) {
+            return auth.substring("Bearer ".length());
+        }
+        return null;
+    }
+
+    /**
      * Logs out of the Opensubtitles API and removes the authorization token.
      *
      * @return a LogoutResult Object which is a wrapper for the API response.
