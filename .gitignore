@@ -1,3 +1,4 @@
 *.class
 .attach*
 Main.java
+.jar
