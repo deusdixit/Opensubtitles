@@ -2,3 +2,4 @@
 .attach*
 Main.java
 .jar
+/target/
